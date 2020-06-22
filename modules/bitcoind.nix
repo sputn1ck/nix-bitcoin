@@ -27,8 +27,12 @@ let
 
     # RPC server options
     rpcport=${toString cfg.rpc.port}
+    rpcwhitelistdefault=0
     ${concatMapStringsSep  "\n"
-      (rpcUser: "rpcauth=${rpcUser.name}:${rpcUser.passwordHMAC}")
+      (rpcUser: ''
+        rpcauth=${rpcUser.name}:${rpcUser.passwordHMAC}
+        ${optionalString (rpcUser.rpcwhitelist != []) "rpcwhitelist=${rpcUser.name}:${lib.strings.concatStringsSep "," rpcUser.rpcwhitelist}"}
+      '')
       (attrValues cfg.rpc.users)
     }
 
@@ -104,6 +108,13 @@ in {
                 description = ''
                   Password HMAC-SHA-256 for JSON-RPC connections. Must be a string of the
                   format <SALT-HEX>$<HMAC-HEX>.
+                '';
+              };
+              rpcwhitelist = mkOption {
+                type = types.listOf types.str;
+                default = [];
+                description = ''
+                  List of allowed rpc calls for each user.
                 '';
               };
             };
