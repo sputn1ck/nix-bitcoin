@@ -12,7 +12,7 @@ let
     ${optionalString (cfg.proxy != null) "proxy=${cfg.proxy}"}
     always-use-proxy=${if cfg.always-use-proxy then "true" else "false"}
     ${optionalString (cfg.bind-addr != null) "bind-addr=${cfg.bind-addr}"}
-    bitcoin-rpcuser=${cfg.bitcoin-rpcuser}
+    bitcoin-rpcuser=${config.services.bitcoind.rpc.users.public.name}
     rpc-file-mode=0660
   '';
 in {
@@ -105,7 +105,7 @@ in {
         # The RPC socket has to be removed otherwise we might have stale sockets
         rm -f ${cfg.dataDir}/bitcoin/lightning-rpc
         chmod 600 ${cfg.dataDir}/config
-        echo "bitcoin-rpcpassword=$(cat ${config.nix-bitcoin.secretsDir}/bitcoin-rpcpassword)" >> '${cfg.dataDir}/config'
+        echo "bitcoin-rpcpassword=$(cat ${config.nix-bitcoin.secretsDir}/bitcoin-rpcpassword-public)" >> '${cfg.dataDir}/config'
         '';
       serviceConfig = nix-bitcoin-services.defaultHardening // {
         ExecStart = "${pkgs.nix-bitcoin.clightning}/bin/lightningd --lightning-dir=${cfg.dataDir}";

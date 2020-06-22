@@ -24,7 +24,7 @@ let
     tor.streamisolation=true
     tor.privatekeypath=${cfg.dataDir}/v3_onion_private_key
 
-    bitcoind.rpcuser=${config.services.bitcoind.rpcuser}
+    bitcoind.rpcuser=${config.services.bitcoind.rpc.users.public.name}
     bitcoind.zmqpubrawblock=${config.services.bitcoind.zmqpubrawblock}
     bitcoind.zmqpubrawtx=${config.services.bitcoind.zmqpubrawtx}
 
@@ -108,7 +108,7 @@ in {
       after = [ "bitcoind.service" ];
       preStart = ''
         install -m600 ${configFile} '${cfg.dataDir}/lnd.conf'
-        echo "bitcoind.rpcpass=$(cat ${secretsDir}/bitcoin-rpcpassword)" >> '${cfg.dataDir}/lnd.conf'
+        echo "bitcoind.rpcpass=$(cat ${secretsDir}/bitcoin-rpcpassword-public)" >> '${cfg.dataDir}/lnd.conf'
       '';
       serviceConfig = nix-bitcoin-services.defaultHardening // {
         ExecStart = "${cfg.package}/bin/lnd --configfile=${cfg.dataDir}/lnd.conf";
