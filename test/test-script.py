@@ -36,6 +36,14 @@ succeed('[[ $(stat -c "%U:%G %a" /secrets/dummy) = "root:root 440" ]]')
 assert_running("bitcoind")
 machine.wait_until_succeeds("bitcoin-cli getnetworkinfo")
 assert_matches("su operator -c 'bitcoin-cli getnetworkinfo' | jq", '"version"')
+# Test RPC Whitelist
+machine.wait_until_succeeds("su operator -c 'bitcoin-cli help'")
+machine.fail(
+    "bitcoin-cli -rpcuser=publicrpc -rpcpassword=$(cat /secrets/bitcoin-rpcpassword-public) help"
+)
+machine.wait_until_succeeds(
+    log_has_string("bitcoind", "RPC User publicrpc not allowed to call method help")
+)
 
 assert_running("electrs")
 machine.wait_for_open_port(4224)  # prometeus metrics provider
