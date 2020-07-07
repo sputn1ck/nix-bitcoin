@@ -81,6 +81,12 @@ in {
     # lnd
     services.lnd.enforceTor = true;
 
+    # loopd
+    services.lightning-loop = {
+      proxy = cfg.tor.client.socksListenAddress;
+      enforceTor = true;
+    };
+
     # liquidd
     services.liquidd = {
       rpcuser = "liquidrpc";
