@@ -25,6 +25,8 @@ import ./make-test.nix rec {
 
     services.lnd.enable = true;
     systemd.services.lnd.wantedBy = mkForce [];
+    services.lightning-loop.enable = true;
+    systemd.services.loopd.wantedBy = mkForce [];
 
     services.electrs.enable = true;
 
