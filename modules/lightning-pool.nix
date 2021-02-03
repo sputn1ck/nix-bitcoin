@@ -15,6 +15,8 @@ let
     lnd.host=${config.services.lnd.rpcAddress}:${toString config.services.lnd.rpcPort}
     lnd.macaroondir=${config.services.lnd.networkDir}
     lnd.tlspath=${secretsDir}/lnd-cert
+    
+    ${optionalString (cfg.proxy != null) "proxy=${cfg.proxy}"}
 
     ${cfg.extraConfig}
   '';
@@ -50,6 +52,11 @@ in {
       type = types.path;
       default = "/var/lib/lightning-pool";
       description = "The data directory for lightning-pool.";
+    };
+    proxy = mkOption {
+      type = types.nullOr types.str;
+      default = if cfg.enforceTor then config.services.tor.client.socksListenAddress else null;
+      description = "host:port of SOCKS5 proxy for connnecting to the pool auction server.";
     };
     extraConfig = mkOption {
       type = types.lines;

@@ -1,13 +1,19 @@
-{ pkgs, buildGoModule, fetchurl, lib }:
+{ pkgs, buildGoModule,fetchFromGitHub, fetchurl, lib }:
 
 buildGoModule rec {
   pname = "lightning-pool";
-  version = "0.4.3-alpha";
+  version = "sputn1ck-socks-proxy";
 
-  src = fetchurl {
-    url = "https://github.com/lightninglabs/pool/archive/v${version}.tar.gz";
-    # Use ./get-sha256.sh to fetch latest (verified) sha256
-    sha256 = "0d4c36d119f5fc49cb56b107da46b28a3fd5bf0786c84d812a0c3b49f6f8a781";
+  # src = fetchurl {
+  #   url = "https://github.com/lightninglabs/pool/archive/v${version}.tar.gz";
+  #   # Use ./get-sha256.sh to fetch latest (verified) sha256
+  #   sha256 = "0d4c36d119f5fc49cb56b107da46b28a3fd5bf0786c84d812a0c3b49f6f8a781";
+  # };
+   src = fetchFromGitHub {
+      owner = "sputn1ck";
+      repo = "pool";
+      rev = "socks-proxy";
+      sha256 = "1wjcl4l90r720pfvvg7r4vxhky1953hy353ygwg58xb48422lvap";
   };
 
   subPackages = [ "cmd/pool" "cmd/poold" ];
